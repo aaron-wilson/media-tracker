@@ -40,7 +40,7 @@ class NoteForm extends React.Component {
 
   render() {
     return (
-      <div key="hmbc1">
+      <div>
         <input
           type="text"
           placeholder="Add a note"

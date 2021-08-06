@@ -1,5 +1,5 @@
 body {
-  /*margin: 0;*/
+  margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -7,19 +7,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: #484848;
   font-family: sans-serif;
-  margin: 1em;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-/*body {
-  color: #484848;
-  font-family: sans-serif;
-  margin: 1em;
-}*/
 
 header {
   display: flex;
@@ -49,6 +42,10 @@ a:visited {
 
 a:hover {
   color: #aaaaaa !important;
+}
+
+.padding-right-1 {
+  padding-right: 1em;
 }
 
 .medialists-card {
@@ -111,14 +108,14 @@ a:hover {
   color: #00a699 !important;
 }
 
-.welcome-card {
+.mediatracker-card {
   margin: 5em;
   display: flex;
   justify-content: center;
 }
 
 .home-card {
-  margin: 1em auto;
+  margin: 1em;
 }
 
 .display {

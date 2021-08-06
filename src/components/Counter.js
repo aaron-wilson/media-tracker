@@ -4,10 +4,12 @@ import {
   decrement,
   increment,
   incrementByAmount,
+} from '../actions/counterActions';
+import {
   incrementAsync,
   incrementIfOdd,
-  selectCount,
-} from './counterSlice';
+} from '../thunks/counterThunks';
+import selectCount from '../selectors/counterSelectors';
 import styles from './Counter.module.css';
 
 export function Counter() {

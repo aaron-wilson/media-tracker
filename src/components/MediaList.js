@@ -304,13 +304,13 @@ class MediaList extends Component {
         // console.log('API Success: all results', data.results)
         // console.log('API Success: first result', data.results[0])
 
-        const foundMedia = (data.results.slice(0, 3).filter((media) => {
+        const foundMedia = data.results.slice(0, 3).filter((media) => {
           const mediaElements = this.state.unseenMedias.concat(this.state.seenMedias);
           const foundMediaElements = mediaElements.filter((mediaElement) => mediaElement.props.tmdb_id === media.id);
           if (foundMediaElements.length === 1) return true;
           return false;
-        }));
-        const newPosterPath = foundMedia.length ? foundMedia[0].poster_path : '';
+        });
+        const newPosterPath = foundMedia.length === 1 ? foundMedia[0].poster_path : '';
         return newPosterPath;
       })
       .then((newPosterPath) => {
