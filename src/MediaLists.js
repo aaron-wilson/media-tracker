@@ -20,9 +20,9 @@ class MediaLists extends Component {
     fetch(url, {
       credentials: 'same-origin',
     })
-      .then(response => response.json())
+      .then((response) => response.json())
       .then((data) => {
-        const lists = data.mediaLists.map(mediaList => (
+        const lists = data.mediaLists.map((mediaList) => (
           <div key={mediaList.id} className="block">
             <div className="inline-block">
               <Link to={`/mediatracker/medialists/${mediaList.id}`}>
@@ -32,12 +32,10 @@ class MediaLists extends Component {
               </Link>
               <button
                 type="button"
-                className="close lists-close-position"
+                className="btn-close close-position-1"
                 aria-label="Close"
-                onClick={e => this.handleDeleteClick(e, mediaList.id)}
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
+                onClick={(e) => this.handleDeleteClick(e, mediaList.id)}
+              />
             </div>
           </div>
         ));
@@ -79,7 +77,7 @@ class MediaLists extends Component {
         this.setState({ value: '' });
         this.initialize();
       })
-      .catch(error => console.error('Internal Server', error));
+      .catch((error) => console.error('Internal Server', error));
   }
 
   handleDeleteClick(event, mediaListId) {
@@ -106,7 +104,7 @@ class MediaLists extends Component {
         console.log('success', data);
         this.initialize();
       })
-      .catch(error => console.error('Internal Server', error));
+      .catch((error) => console.error('Internal Server', error));
   }
 
   render() {

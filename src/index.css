@@ -1,8 +1,25 @@
 body {
+  /*margin: 0;*/
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   color: #484848;
   font-family: sans-serif;
   margin: 1em;
 }
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/*body {
+  color: #484848;
+  font-family: sans-serif;
+  margin: 1em;
+}*/
 
 header {
   display: flex;
@@ -115,20 +132,33 @@ a:hover {
   text-align: center;
 }
 
-.lists-close-position {
+.close-position-1 {
   position: relative;
   top: 5px;
   left: .4em;
 }
 
-.list-close-position {
+.close-position-2 {
+  float: right;
   position: relative;
-  top: -108px;
-  right: -7px;
+  top: -104px;
+  right: -9px;
 }
 
 .note-button {
   margin: 1em 1em 0 1em;
+}
+
+.update-note-button {
+  margin-bottom: 2em;
+}
+
+.close-note-button {
+  margin-top: 3em;
+}
+
+.note-text {
+  text-align: center;
 }
 
 .block {

@@ -1,27 +1,24 @@
 import React, { Component } from 'react';
+import NoteForm from './NoteForm';
 
 class MediaList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       value: '',
-      noteValue: '',
       modalDisplay: null,
-      showNote: false,
-      noteMediaId: null,
       unseenMedias: [],
       seenMedias: [],
     };
     this.handleChange = this.handleChange.bind(this);
-    this.handleNoteChange = this.handleNoteChange.bind(this);
-    this.handleNoteSubmit = this.handleNoteSubmit.bind(this);
-    this.handleNoteClose = this.handleNoteClose.bind(this);
-    this.handleNevermindClick = this.handleNevermindClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleNevermindClick = this.handleNevermindClick.bind(this);
+    this.handleCloseClick = this.handleCloseClick.bind(this);
     this.handleMediaBoxClick = this.handleMediaBoxClick.bind(this);
-    this.handleMediaBoxRightClick = this.handleMediaBoxRightClick.bind(this);
+    this.handleMoveClick = this.handleMoveClick.bind(this);
     this.handleResultClick = this.handleResultClick.bind(this);
     this.handleDeleteClick = this.handleDeleteClick.bind(this);
+    this.handleRefreshImageClick = this.handleRefreshImageClick.bind(this);
     this.dataObject = {};
   }
 
@@ -36,15 +33,15 @@ class MediaList extends Component {
     fetch(`${url}/unseen`, {
       credentials: 'same-origin',
     })
-      .then(response => response.json())
+      .then((response) => response.json())
       .then((data) => {
-        const unseenMedias = data.medias.map(media => (
+        const unseenMedias = data.medias.map((media) => (
           <div
             className="form-control media-box-wrapper"
             key={media.id}
             id={media.id}
-            onClick={e => this.handleMediaBoxClick(e, media.id, 'unseen')}
-            onContextMenu={e => this.handleMediaBoxRightClick(e, media.id, 'unseen')}
+            tmdb_id={media.tmdb_id}
+            onClick={(e) => this.handleMediaBoxClick(media.id, media.title, 'unseen')}
           >
             <div className="media-box">
               <img src={media.tmdb_poster} alt="poster" />
@@ -53,27 +50,25 @@ class MediaList extends Component {
             </div>
             <button
               type="button"
-              className="close list-close-position"
+              className="btn-close close-position-2"
               aria-label="Close"
-              onClick={e => this.handleDeleteClick(e, media.id)}
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
+              onClick={(e) => this.handleDeleteClick(e, media.id)}
+            />
           </div>
         ));
 
         fetch(`${url}/seen`, {
           credentials: 'same-origin',
         })
-          .then(response => response.json())
+          .then((response) => response.json())
           .then((data) => {
-            const seenMedias = data.medias.map(media => (
+            const seenMedias = data.medias.map((media) => (
               <div
                 className="form-control media-box-wrapper"
                 key={media.id}
                 id={media.id}
-                onClick={e => this.handleMediaBoxClick(e, media.id, 'seen')}
-                onContextMenu={e => this.handleMediaBoxRightClick(e, media.id, 'seen')}
+                tmdb_id={media.tmdb_id}
+                onClick={(e) => this.handleMediaBoxClick(media.id, media.title, 'seen')}
               >
                 <div className="media-box">
                   <img src={media.tmdb_poster} alt="poster" />
@@ -82,20 +77,15 @@ class MediaList extends Component {
                 </div>
                 <button
                   type="button"
-                  className="close list-close-position"
+                  className="btn-close close-position-2"
                   aria-label="Close"
-                  onClick={e => this.handleDeleteClick(e, media.id)}
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
+                  onClick={(e) => this.handleDeleteClick(e, media.id)}
+                />
               </div>
             ));
             this.setState((prevState, props) => ({
               value: '',
-              noteValue: '',
               modalDisplay: null,
-              showNote: false,
-              noteMediaId: null,
               unseenMedias,
               seenMedias,
             }));
@@ -107,14 +97,6 @@ class MediaList extends Component {
     this.setState({ value: event.target.value });
   }
 
-  handleNoteChange(event) {
-    this.setState({ noteValue: event.target.value });
-  }
-
-  handleNevermindClick(event) {
-    this.setState({ modalDisplay: null }, () => { this.dataObject = {}; });
-  }
-
   handleSubmit(event) {
     event.preventDefault();
     const url = `https://api.themoviedb.org/3/search/multi?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US&query=${this.state.value}&page=1&include_adult=false`;
@@ -122,9 +104,9 @@ class MediaList extends Component {
     fetch(url, {
       credentials: 'same-origin',
     })
-      .then(response => response.json())
+      .then((response) => response.json())
       .then((data) => {
-        // console.log('API Success: all results', data.results)
+        // console.log('API Success: all results', data.results);
         // console.log('API Success: first result', data.results[0])
 
         const modalDisplay = data.results.slice(0, 3).map((media) => {
@@ -135,7 +117,7 @@ class MediaList extends Component {
               className="form-control media-box-wrapper"
               key={media.id}
               id={media.id}
-              onClick={e => this.handleResultClick(e, media.id)}
+              onClick={(e) => this.handleResultClick(media.id)}
             >
               <div className="media-box">
                 <img src={media.poster_path ? `https://image.tmdb.org/t/p/w780${media.poster_path}` : ''} alt="poster" />
@@ -146,69 +128,74 @@ class MediaList extends Component {
           );
         });
 
-        modalDisplay.push(<button key={0} className="btn btn-primary pointer" onClick={this.handleNevermindClick}>Nevermind</button>);
+        modalDisplay.push(<button key="hs1" className="btn btn-primary pointer" onClick={this.handleNevermindClick}>Nevermind</button>);
 
         this.setState((prevState, props) => ({
           value: '',
           modalDisplay,
         }));
       })
-      .catch(error => console.error('API', error));
+      .catch((error) => console.error('API', error));
   }
 
-  handleNoteSubmit(event, mediaId) {
-    const { mediaListId } = this.props.match.params;
-    const myRequest = new Request(`${process.env.REACT_APP_BASE_URL}/medias/lists/${mediaListId}/medias/${mediaId}`, {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        media_note: this.state.noteValue,
-      }),
-      credentials: 'same-origin',
-    });
-
-    fetch(myRequest)
-      .then((response) => {
-        const s = response.status;
-        if (s === 200) return response.json();
-        throw new Error(response.statusText);
-      })
-      .then(() => {
-        this.initialize();
-      })
-      .catch(error => console.error('Internal Server', error));
+  handleNevermindClick() {
+    this.setState({ modalDisplay: null }, () => { this.dataObject = {}; });
   }
 
-  handleNoteClose(event) {
+  handleCloseClick() {
     this.setState({
-      noteValue: null,
-      showNote: false,
-      noteMediaId: null,
+      modalDisplay: null,
     });
   }
 
-  handleMediaBoxClick(event, mediaId, status) {
+  handleMediaBoxClick(mediaId, mediaTitle, status) {
     const { mediaListId } = this.props.match.params;
     const url = `${process.env.REACT_APP_BASE_URL}/medias/lists/${mediaListId}/medias/${mediaId}`;
     fetch(url, {
       credentials: 'same-origin',
     })
-      .then(response => response.json())
+      .then((response) => response.json())
       .then((data) => {
+        const modalDisplay = [];
+
+        const nfProps = {
+          mediaListId,
+          mediaId,
+          defaultValue: data.row.media_note ? data.row.media_note : '',
+          handleCloseClick: this.handleCloseClick,
+        };
+        modalDisplay.push(
+          <div key="hmbc1">
+            <NoteForm {...nfProps} />
+          </div>,
+        );
+
+        modalDisplay.push(
+          <div key="hmbc2">
+            <button className="btn btn-primary note-button pointer" onClick={(e) => this.handleRefreshImageClick(mediaId, mediaTitle)}>Refresh Image</button>
+          </div>,
+        );
+
+        modalDisplay.push(
+          <div key="hmbc3">
+            <button className="btn btn-primary note-button pointer" onClick={(e) => this.handleMoveClick(mediaId, status)}>{status === 'seen' ? 'Move to To Watch' : 'Move to Watched'}</button>
+          </div>,
+        );
+
+        modalDisplay.push(
+          <div key="hmbc4">
+            <button className="btn btn-danger note-button close-note-button pointer" onClick={this.handleCloseClick}>Close</button>
+          </div>,
+        );
+
         this.setState({
-          noteValue: data.row.media_note,
-          showNote: true,
-          noteMediaId: mediaId,
+          modalDisplay,
         });
       })
-      .catch(error => console.error('Internal Server', error));
+      .catch((error) => console.error('Internal Server', error));
   }
 
-  handleMediaBoxRightClick(event, mediaId, status) {
-    event.preventDefault();
+  handleMoveClick(mediaId, status) {
     const { mediaListId } = this.props.match.params;
     const myRequest = new Request(`${process.env.REACT_APP_BASE_URL}/medias/lists/${mediaListId}/medias/${mediaId}`, {
       method: 'PUT',
@@ -231,10 +218,10 @@ class MediaList extends Component {
       .then(() => {
         this.initialize();
       })
-      .catch(error => console.error('Internal Server', error));
+      .catch((error) => console.error('Internal Server', error));
   }
 
-  handleResultClick(event, tmdbId) {
+  handleResultClick(tmdbId) {
     const media = this.dataObject[tmdbId];
 
     const myRequest = new Request(`${process.env.REACT_APP_BASE_URL}/medias`, {
@@ -272,7 +259,7 @@ class MediaList extends Component {
         this.dataObject = {};
         this.initialize();
       })
-      .catch(error => console.error('Internal Server', error));
+      .catch((error) => console.error('Internal Server', error));
   }
 
   handleDeleteClick(event, mediaId) {
@@ -301,38 +288,77 @@ class MediaList extends Component {
         console.log('success', data);
         this.initialize();
       })
-      .catch(error => console.error('Internal Server', error));
+      .catch((error) => console.error('Internal Server', error));
+  }
+
+  handleRefreshImageClick(mediaId, mediaTitle) {
+    const url = `https://api.themoviedb.org/3/search/multi?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US&query=${mediaTitle}&page=1&include_adult=false`;
+    // const url = `https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
+    // const url = `https://api.themoviedb.org/3/tv/${tmdbId}?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
+
+    fetch(url, {
+      credentials: 'same-origin',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // console.log('API Success: all results', data.results)
+        // console.log('API Success: first result', data.results[0])
+
+        const foundMedia = (data.results.slice(0, 3).filter((media) => {
+          const mediaElements = this.state.unseenMedias.concat(this.state.seenMedias);
+          const foundMediaElements = mediaElements.filter((mediaElement) => mediaElement.props.tmdb_id === media.id);
+          if (foundMediaElements.length === 1) return true;
+          return false;
+        }));
+        const newPosterPath = foundMedia.length ? foundMedia[0].poster_path : '';
+        return newPosterPath;
+      })
+      .then((newPosterPath) => {
+        if (!newPosterPath) throw Error(`newPosterPath ${newPosterPath} invalid`);
+
+        const myRequest = new Request(`${process.env.REACT_APP_BASE_URL}/medias/id/${mediaId}`, {
+          method: 'PUT',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            poster_path: newPosterPath,
+          }),
+          credentials: 'same-origin',
+        });
+
+        return fetch(myRequest);
+      })
+      .then((response) => {
+        const s = response.status;
+        if (s === 200 || s === 422) return response.json();
+        throw new Error(response.statusText);
+      })
+      .then((data) => {
+        // show the user successful response
+        // whether 'db updated' or 'already exists'
+        console.log('success', data);
+        this.initialize();
+      })
+      .catch((error) => {
+        console.error('API', error);
+        // TODO: close modal
+      });
   }
 
   render() {
     return (
       <div>
-        {this.state.modalDisplay ?
-          <div className="medialist-modal-window">
-            <div className="medialist-modal">
-              {this.state.modalDisplay}
+        {this.state.modalDisplay
+          ? (
+            <div className="medialist-modal-window">
+              <div className="medialist-modal">
+                {this.state.modalDisplay}
+              </div>
             </div>
-          </div>
-          :
-          null
-        }
-        {this.state.showNote ?
-          <div className="medialist-modal-window">
-            <div className="medialist-modal">
-              <input
-                type="text"
-                placeholder="Add a note..."
-                value={this.state.noteValue}
-                onChange={this.handleNoteChange}
-                className="form-control"
-              />
-              <button key={0} className="btn btn-primary note-button pointer" onClick={e => this.handleNoteSubmit(e, this.state.noteMediaId)}>Update</button>
-              <button key={0} className="btn btn-danger note-button pointer" onClick={e => this.handleNoteClose(e)}>Close</button>
-            </div>
-          </div>
-          :
-          null
-        }
+          )
+          : null}
         <div className="home-card">
           <form onSubmit={this.handleSubmit} className="form-group">
             <input
